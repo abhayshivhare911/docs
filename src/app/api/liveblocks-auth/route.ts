@@ -10,8 +10,12 @@ const liveblocks = new Liveblocks({
 });
 
 export async function POST(req: Request) {
+  console.log("SECRET KEY EXISTS:", !!process.env.LIVEBLOCKS_SECRET_KEY);
+  console.log("CONVEX URL EXISTS:", !!process.env.NEXT_PUBLIC_CONVEX_URL);
   const { sessionClaims } = await auth();
+   console.log("1. sessionClaims:", sessionClaims);
   if (!sessionClaims) {
+    console.log("FAILED: no sessionClaims");
     return new Response("Unauthorized", { status: 401 });
   }
 
