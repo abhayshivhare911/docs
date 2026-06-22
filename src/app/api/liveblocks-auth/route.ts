@@ -31,13 +31,29 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const isOwner = document.ownerId === user.id;
-  const isOrganizationMember = 
-    !!(document.organizationId && document.organizationId === sessionClaims.org_id);
+  const orgId = (sessionClaims as any)?.o?.id;
 
-  if (!isOwner && !isOrganizationMember) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+console.log("document.organizationId", document?.organizationId);
+console.log("document.ownerId", document?.ownerId);
+console.log("user.id", user?.id);
+console.log("orgId", orgId);
+console.log("sessionClaims.org_id", (sessionClaims as any)?.org_id);
+
+const isOwner = document.ownerId === user.id;
+
+const isOrganizationMember =
+  !!(
+    document.organizationId &&
+    document.organizationId === orgId
+  );
+
+console.log("isOwner", isOwner);
+console.log("isOrganizationMember", isOrganizationMember);
+
+if (!isOwner && !isOrganizationMember) {
+  console.log("FAILED AUTH CHECK");
+  return new Response("Unauthorized", { status: 401 });
+}
 
   const name = user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous";
   const nameToNumber = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
